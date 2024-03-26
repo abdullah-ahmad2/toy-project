@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorators/index';
 import { JwtGuard } from '../auth/guard/index';
+import { EditUserDto } from './dto/index';
+import { UserService } from './user.service';
 
 @UseGuards(JwtGuard)
 
@@ -10,8 +12,15 @@ import { JwtGuard } from '../auth/guard/index';
 
 export class UserController {
 
+    constructor( private userService: UserService ) {}
+
     @Get('me')
     getMe(@GetUser('') user: User) {
         return user
+    }
+
+    @Patch()
+    editUser(@GetUser('id') userId: number, @Body() dto: EditUserDto) {
+        return this.userService.editUser(userId, dto)
     }
 }
